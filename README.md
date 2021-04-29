@@ -2,7 +2,8 @@
 #  Add Blob NFS Mount Options
 
 Install blob-csi-drivers from here  https://github.com/kubernetes-sigs/blob-csi-driver
-then deploy.sh
+then follow [this](https://github.com/krishnaji/azure-kubernetes-blob-nfs-csi-mount-options/blob/main/deploy-nfs-mount-options.sh)
+
 Login to the node where the test pod is running and then run nfsstat -m
 
 ``` 
