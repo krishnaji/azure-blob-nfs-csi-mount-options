@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: kube-system
+  name: udev-edit
+  labels:
+    app: udev-edit
+spec:
+  selector:
+    matchLabels:
+      name: udev-edit
+  template:
+    metadata:
+      labels:
+        name: udev-edit
+    spec:  
+      hostPID: true
+      priorityClassName: system-node-critical
+      containers:
+        - name: udev
+          image: ubuntu
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /tmp
+              name: udev-read-ahead
+            - name: host-mount
+              mountPath: /mnt/azure
+          command: [ "/bin/sh", "-c", "--" ]
+          args: ['cp /tmp/90-nfs-readahead.rules /mnt/azure/90-nfs-readahead.rules ;/usr/bin/nsenter -m/proc/1/ns/mnt -- udevadm control --reload;while true; do sleep 30; done;']
+      volumes:
+        - name:  udev-read-ahead
+          configMap:
+            name: read-ahead-rule
+        - name: host-mount
+          hostPath:
+            path: /etc/udev/rules.d/
